@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حاسبة التقدير الجامعي</title>
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      background: linear-gradient(135deg, #0a1a2f, #142850);
+      color: #e0e6ed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 30px;
+      border-radius: 20px;
+      width: 380px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 22px;
+      color: #00bfff;
+    }
+
+    input, select, button {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+
+    input, select {
+      background: #1b2a49;
+      color: #fff;
+      text-align: center;
+    }
+
+    button {
+      background: #00bfff;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0099cc;
+    }
+
+    .result {
+      margin-top: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🎓 حاسبة التقدير الجامعي</h1>
+    <input type="number" id="percentage" placeholder="أدخل النسبة المئوية (مثلاً 87)">
+    <input type="number" step="0.1" id="points" placeholder="أدخل النقاط (مثلاً 3.3)">
+    <select id="grade">
+      <option value="">اختر التقدير</option>
+      <option value="+A">+A ممتاز</option>
+      <option value="A">A ممتاز</option>
+      <option value="+B">+B جيد جدًا</option>
+      <option value="B">B جيد جدًا</option>
+      <option value="+C">+C جيد</option>
+      <option value="C">C جيد</option>
+      <option value="+D">+D مقبول</option>
+      <option value="D">D مقبول</option>
+      <option value="F">F راسب</option>
+    </select>
+    <button onclick="calculate()">احسب</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const table = [
+      { min: 95, max: 100.1, grade: "+A", points: 4 },
+      { min: 90, max: 95, grade: "A", points: 3.7 },
+      { min: 85, max: 90, grade: "+B", points: 3.3 },
+      { min: 80, max: 85, grade: "B", points: 3 },
+      { min: 75, max: 80, grade: "+C", points: 2.7 },
+      { min: 65, max: 75, grade: "C", points: 2.3 },
+      { min: 55, max: 65, grade: "+D", points: 2.2 },
+      { min: 50, max: 55, grade: "D", points: 2 },
+      { min: 0, max: 50, grade: "F", points: 0 }
+    ];
+
+    function calculate() {
+      const perc = parseFloat(document.getElementById("percentage").value);
+      const pts = parseFloat(document.getElementById("points").value);
+      const grd = document.getElementById("grade").value;
+      let result = "";
+
+      if (perc) {
+        const row = table.find(r => perc >= r.min && perc < r.max);
+        if (row) result = `التقدير: ${row.grade} (${getGradeText(row.grade)})<br>النقاط: ${row.points}`;
+        else result = "النسبة غير صحيحة.";
+      } 
+      else if (pts) {
+        const row = table.find(r => Math.abs(r.points - pts) < 0.05);
+        if (row) result = `النسبة التقريبية: ${row.min}% - ${row.max}%<br>التقدير: ${row.grade} (${getGradeText(row.grade)})`;
+        else result = "عدد النقاط غير مطابق لأي تقدير.";
+      } 
+      else if (grd) {
+        const row = table.find(r => r.grade === grd);
+        if (row) result = `النسبة التقريبية: ${row.min}% - ${row.max}%<br>النقاط: ${row.points}`;
+        else result = "التقدير غير صحيح.";
+      } 
+      else {
+        result = "من فضلك أدخل قيمة واحدة على الأقل.";
+      }
+
+      document.getElementById("result").innerHTML = result;
+    }
+
+    function getGradeText(g) {
+      switch (g) {
+        case "+A":
+        case "A": return "ممتاز";
+        case "+B":
+        case "B": return "جيد جدًا";
+        case "+C":
+        case "C": return "جيد";
+        case "+D":
+        case "D": return "مقبول";
+        case "F": return "راسب";
+      }
+    }
+  </script>
+
+</body>
+</html>
